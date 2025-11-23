@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package file;
+
+option go_package = "go-drive/proto/file";
+
+import "google/protobuf/timestamp.proto";
+
+// File service definition
+service FileService {
+  // Create file metadata
+  rpc CreateFile(CreateFileRequest) returns (CreateFileResponse);
+
+  // Get file metadata
+  rpc GetFile(GetFileRequest) returns (GetFileResponse);
+
+  // List files for a user
+  rpc ListFiles(ListFilesRequest) returns (ListFilesResponse);
+
+  // Delete file
+  rpc DeleteFile(DeleteFileRequest) returns (DeleteFileResponse);
+
+  // Get upload URL (for direct S3/storage upload)
+  rpc GetUploadURL(GetUploadURLRequest) returns (GetUploadURLResponse);
+}
+
+// File metadata message
+message File {
+  string id = 1;
+  string name = 2;
+  string user_id = 3;
+  string folder_id = 4;
+  int64 size = 5;
+  string mime_type = 6;
+  string storage_key = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+// CreateFile messages
+message CreateFileRequest {
+  string name = 1;
+  string user_id = 2;
+  string folder_id = 3;
+  int64 size = 4;
+  string mime_type = 5;
+}
+
+message CreateFileResponse {
+  File file = 1;
+  string upload_url = 2;
+}
+
+// GetFile messages
+message GetFileRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message GetFileResponse {
+  File file = 1;
+  string download_url = 2;
+}
+
+// ListFiles messages
+message ListFilesRequest {
+  string user_id = 1;
+  optional string folder_id = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message ListFilesResponse {
+  repeated File files = 1;
+  int32 total_count = 2;
+}
+
+// DeleteFile messages
+message DeleteFileRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message DeleteFileResponse {
+  string message = 1;
+}
+
+// GetUploadURL messages
+message GetUploadURLRequest {
+  string file_name = 1;
+  string user_id = 2;
+  string mime_type = 3;
+}
+
+message GetUploadURLResponse {
+  string upload_url = 1;
+  string file_id = 2;
+}
