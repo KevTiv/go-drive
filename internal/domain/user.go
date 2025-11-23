@@ -4,24 +4,30 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 // User represents a user in the system
 type User struct {
-	ID            uuid.UUID  `json:"id"`
-	FirstName     string     `json:"first_name"`
-	Surname       string     `json:"surname"`
-	Email         string     `json:"email"`
-	Phone         string     `json:"phone,omitempty"`
-	Country       string     `json:"country"`
-	Region        string     `json:"region,omitempty"`
-	City          string     `json:"city,omitempty"`
-	Type          string     `json:"type"`
-	EmailVerified bool       `json:"email_verified"`
-	IsActive      bool       `json:"is_active"`
-	CreatedAt     time.Time  `json:"created_at"`
-	UpdatedAt     time.Time  `json:"updated_at"`
-	DeletedAt     *time.Time `json:"deleted_at,omitempty"`
+	ID            uuid.UUID      `json:"id" gorm:"type:uuid;primaryKey;default:gen_random_uuid()"`
+	FirstName     string         `json:"first_name" gorm:"column:firstname;type:varchar(100);not null"`
+	Surname       string         `json:"surname" gorm:"type:varchar(100);not null"`
+	Email         string         `json:"email" gorm:"type:varchar(255);uniqueIndex;not null"`
+	Phone         string         `json:"phone,omitempty" gorm:"type:varchar(50)"`
+	Country       string         `json:"country" gorm:"type:varchar(100);default:'The netherlands'"`
+	Region        string         `json:"region,omitempty" gorm:"type:varchar(100)"`
+	City          string         `json:"city,omitempty" gorm:"type:varchar(100)"`
+	Type          string         `json:"type" gorm:"type:varchar(50);default:'standard';index"`
+	EmailVerified bool           `json:"email_verified" gorm:"default:false"`
+	IsActive      bool           `json:"is_active" gorm:"default:true;index"`
+	CreatedAt     time.Time      `json:"created_at" gorm:"index:idx_users_created_at,sort:desc"`
+	UpdatedAt     time.Time      `json:"updated_at"`
+	DeletedAt     gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`
+}
+
+// TableName specifies the table name for the User model
+func (User) TableName() string {
+	return "users"
 }
 
 // UserType constants

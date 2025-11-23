@@ -46,7 +46,8 @@ func main() {
 
 	log.Printf("Connecting to database: %s@%s:%s/%s", dbUser, dbHost, dbPort, dbName)
 
-	repo, err := repository.NewPostgresUserRepository(dbConfig)
+	// Use GORM repository
+	repo, err := repository.NewGormUserRepository(dbConfig)
 	if err != nil {
 		log.Fatalf("Failed to initialize database: %v", err)
 	}

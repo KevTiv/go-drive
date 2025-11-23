@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"go-drive/internal/database"
 	pb "go-drive/proto/user"
 )
 
@@ -104,7 +105,7 @@ func TestPostgresUserRepository_Create(t *testing.T) {
 			tt.mockSetup(mock)
 
 			// Create repository
-			repo := &postgresUserRepository{db: db}
+			repo := &postgresUserRepository{conn: &database.Connection{DB: db}}
 
 			// Execute
 			user, err := repo.Create(context.Background(), tt.request)
@@ -195,7 +196,7 @@ func TestPostgresUserRepository_GetByID(t *testing.T) {
 
 			tt.mockSetup(mock)
 
-			repo := &postgresUserRepository{db: db}
+			repo := &postgresUserRepository{conn: &database.Connection{DB: db}}
 			user, err := repo.GetByID(context.Background(), tt.userID)
 
 			if tt.expectedError {
@@ -318,7 +319,7 @@ func TestPostgresUserRepository_Update(t *testing.T) {
 
 			tt.mockSetup(mock)
 
-			repo := &postgresUserRepository{db: db}
+			repo := &postgresUserRepository{conn: &database.Connection{DB: db}}
 			user, err := repo.Update(context.Background(), tt.request)
 
 			if tt.expectedError {
@@ -375,7 +376,7 @@ func TestPostgresUserRepository_Delete(t *testing.T) {
 
 			tt.mockSetup(mock)
 
-			repo := &postgresUserRepository{db: db}
+			repo := &postgresUserRepository{conn: &database.Connection{DB: db}}
 			err = repo.Delete(context.Background(), tt.userID)
 
 			if tt.expectedError {
@@ -505,7 +506,7 @@ func TestPostgresUserRepository_List(t *testing.T) {
 
 			tt.mockSetup(mock)
 
-			repo := &postgresUserRepository{db: db}
+			repo := &postgresUserRepository{conn: &database.Connection{DB: db}}
 			users, totalCount, err := repo.List(context.Background(), tt.page, tt.pageSize, tt.filterType, tt.filterActive)
 
 			if tt.expectedError {
@@ -562,7 +563,7 @@ func TestPostgresUserRepository_VerifyEmail(t *testing.T) {
 
 			tt.mockSetup(mock)
 
-			repo := &postgresUserRepository{db: db}
+			repo := &postgresUserRepository{conn: &database.Connection{DB: db}}
 			err = repo.VerifyEmail(context.Background(), tt.userID)
 
 			if tt.expectedError {

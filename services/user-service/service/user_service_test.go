@@ -66,6 +66,11 @@ func (m *MockUserRepository) Close() error {
 	return args.Error(0)
 }
 
+func (m *MockUserRepository) HealthCheck(ctx context.Context) error {
+	args := m.Called(ctx)
+	return args.Error(0)
+}
+
 func TestUserService_CreateUser(t *testing.T) {
 	tests := []struct {
 		name          string

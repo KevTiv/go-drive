@@ -25,6 +25,8 @@ build: proto ## Build all services
 	go build -o bin/user-service ./services/user-service
 	@echo "Building api-gateway..."
 	go build -o bin/api-gateway ./services/api-gateway
+	@echo "Building migrate tool..."
+	go build -o bin/migrate ./cmd/migrate
 	@echo "Build complete!"
 
 test: ## Run tests
@@ -106,9 +108,21 @@ lint: ## Run linters
 	@echo "Running linters..."
 	golangci-lint run ./...
 
-db-migrate: ## Run database migrations (requires Supabase CLI)
-	@echo "Running database migrations..."
-	supabase db push
+db-migrate: ## Run GORM database migrations
+	@echo "Running GORM database migrations..."
+	./bin/migrate -action=migrate
+
+db-migrate-fresh: ## Drop all tables and run fresh migrations
+	@echo "Running fresh migrations..."
+	./bin/migrate -action=fresh
+
+db-roles: ## Create database service roles
+	@echo "Creating service roles..."
+	./bin/migrate -action=roles
+
+db-drop: ## Drop all tables (WARNING: destructive!)
+	@echo "Dropping all tables..."
+	./bin/migrate -action=drop
 
 # Testing
 test-unit: ## Run unit tests
